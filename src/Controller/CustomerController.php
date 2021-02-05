@@ -7,6 +7,8 @@ use App\Paginator\Paginator;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
+use OpenApi\Annotations as OA;
+use Nelmio\ApiDocBundle\Annotation\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -41,7 +43,9 @@ class CustomerController extends AbstractController
 	}
 
 	/**
+	 * @OA\Tag(name="Customer")
 	 * @Route ("/{id}", name="details_customer", methods={"GET"})
+	 * @Security(name="Bearer")
 	 * @param Customer $customer
 	 * @return Response
 	 */
@@ -56,7 +60,9 @@ class CustomerController extends AbstractController
 	}
 
 	/**
+  * @OA\Tag(name="Customer")
 	* @Route("/{page<\d+>?1}", name="list_customer", methods={"GET"})
+  * @Security(name="Bearer")
 	* @param Request $request
 	* @return Response
 	*/

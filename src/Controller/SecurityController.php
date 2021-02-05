@@ -3,23 +3,16 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
+use OpenApi\Annotations as OA;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
     /**
-     * @Route("/api/login", name="app_login")
+		 * @OA\Tag(name="Login")
+     * @Route("/api/login", name="app_login", methods={"POST"})
      */
-    public function login(): JsonResponse
+    public function login()
 		{
-			$user = $this->getUser();
-
-			return new JsonResponse([
-				'username' => $user->getUsername(),
-				'roles' => $user->getRoles()
-			]);
     }
 }

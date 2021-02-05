@@ -6,6 +6,8 @@ use App\Entity\Phone;
 use App\Paginator\Paginator;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializerInterface;
+use OpenApi\Annotations as OA;
+use Nelmio\ApiDocBundle\Annotation\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,7 +49,9 @@ class PhoneController extends AbstractController
 		}
 
 	/**
+	 * @OA\Tag(name="Phones")
 	 * @Route ("/{id}", name="details_phone", methods={"GET"})
+	 * @Security(name="Bearer")
 	 * @param Phone $phone
 	 * @return Response
 	 */
@@ -63,7 +67,15 @@ class PhoneController extends AbstractController
 		}
 
 	/**
+	 * @OA\Parameter(
+	 *     name="page",
+	 *     in="query",
+	 *     description="Product pagination",
+	 *   required=false
+	 * )
+	 * @OA\Tag(name="Phones")
 	 * @Route("/{page<\d+>?1}", name="list_phone", methods={"GET"})
+	 * @Security(name="Bearer")
 	 * @param Request $request
 	 * @return Response
 	 */
@@ -84,7 +96,9 @@ class PhoneController extends AbstractController
     }
 
 	/**
+	 * @OA\Tag(name="Phones")
 	 * @Route ("/", name="add_phone", methods={"POST"})
+	 * @Security(name="Bearer")
 	 * @param Request $request
 	 * @return JsonResponse
 	 */
@@ -124,7 +138,9 @@ class PhoneController extends AbstractController
 		}
 
 	/**
+	 * @OA\Tag(name="Phones")
 	 * @Route ("/{id}", name="delete_phone", methods={"DELETE"})
+	 * @Security(name="Bearer")
 	 * @param Phone $phone
 	 * @return Response
 	 */

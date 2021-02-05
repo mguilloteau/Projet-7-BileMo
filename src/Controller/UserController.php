@@ -7,6 +7,8 @@ use App\Paginator\Paginator;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
+use OpenApi\Annotations as OA;
+use Nelmio\ApiDocBundle\Annotation\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,7 +49,9 @@ class UserController extends AbstractController
 	}
 
 	/**
-	* @Route("/{id}", name="details_user")
+  * @OA\Tag(name="Users")
+	* @Route("/{id}", name="details_user", methods={"GET"})
+  * @Security(name="Bearer")
 	* @param User $user
 	* @return Response
 	*/
@@ -61,7 +65,9 @@ class UserController extends AbstractController
 	}
 
 	/**
+  * @OA\Tag(name="Users")
 	* @Route("/{page<\d+>?1}", name="list_user", methods={"GET"})
+  * @Security(name="Bearer")
 	* @param Request $request
 	* @return Response
 	*/
@@ -78,7 +84,9 @@ class UserController extends AbstractController
 	}
 
 	/**
+  * @OA\Tag(name="Users")
 	* @Route ("/", name="add_user", methods={"POST"})
+  * @Security(name="Bearer")
 	* @param Request $request
 	* @return JsonResponse
 	*/
@@ -115,7 +123,9 @@ class UserController extends AbstractController
 	}
 
 	/**
+	 * @OA\Tag(name="Users")
 	 * @Route ("/{id}", name="delete_user", methods={"DELETE"})
+	 * @Security(name="Bearer")
 	 * @param User $user
 	 * @return Response
 	 */
