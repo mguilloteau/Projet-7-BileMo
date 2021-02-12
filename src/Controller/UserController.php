@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
 use OpenApi\Annotations as OA;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -49,6 +50,16 @@ class UserController extends AbstractController
 	}
 
 	/**
+	* @OA\Get(
+	*   path="/api/users/{id}",
+	*   summary="Get an existing user by his ID"
+	* )
+	* @OA\Response(
+	*      response="200",
+	*      description="Get an object of the user",
+	*   		@Model(type=User::class, groups={"list_users"})
+	* )
+	* @OA\Response(response="401",description="Token Error")
   * @OA\Tag(name="Users")
 	* @Route("/{id}", name="details_user", methods={"GET"})
   * @Security(name="Bearer")
@@ -65,8 +76,28 @@ class UserController extends AbstractController
 	}
 
 	/**
+	* @OA\Get(
+	*   path="/api/users/",
+	*   summary="List the registered users on page of 10",
+	*   @OA\Parameter(
+	*         name="page",
+	*         in="query",
+	*         description="Page to filter by",
+	*         required=false
+	*     )
+	* )
+	* @OA\Response(
+	*      response="200",
+	*      description="List all users (10 per page)",
+	*   		@OA\JsonContent(
+	*        type="array",
+	*        @OA\Items(ref=@Model(type=User::class, groups={"list_users"}))
+	*     )
+	* )
+  * @OA\Response(response="401",description="Token Error")
+ 	* @OA\Response(response="404",description="There is no data present on this page. Try Again")
   * @OA\Tag(name="Users")
-	* @Route("/{page<\d+>?1}", name="list_user", methods={"GET"})
+	* @Route("/", name="list_user", methods={"GET"})
   * @Security(name="Bearer")
 	* @param Request $request
 	* @return Response
@@ -84,6 +115,45 @@ class UserController extends AbstractController
 	}
 
 	/**
+	* @OA\Post(
+	*   path="/api/users/",
+	*   summary="Create a new user",
+	 * 	@OA\RequestBody(
+	 *       required=true,
+	 *       @OA\MediaType(
+	 *           mediaType="application/json",
+	 *           @OA\Schema(
+	 *               type="object",
+	 *               @OA\Property(
+	 *                   property="username",
+	 *                   description="Username of your user",
+	 *                   type="string"
+	 *               ),
+	 *               @OA\Property(
+	 *                   property="name",
+	 *                   description="Name of your user",
+	 *                   type="string"
+	 *               ),
+	 *   						@OA\Property(
+	 *                   property="surname",
+	 *                   description="Surname of your user",
+	 *                   type="string"
+	 *               ),
+	 *   						@OA\Property(
+	 *                   property="email",
+	 *                   description="Description of your user",
+	 *                   type="string"
+	 *               )
+	 *           )
+	 *       )
+	 * 		)
+	* )
+	* @OA\Response(
+	*      response="201",
+	*      description="Confirmation of user creation",
+	* )
+	* @OA\Response(response="400",description="Error: Some data are incorrect or missing. Try Again.")
+	* @OA\Response(response="401",description="Token Error")
   * @OA\Tag(name="Users")
 	* @Route ("/", name="add_user", methods={"POST"})
   * @Security(name="Bearer")
@@ -116,13 +186,23 @@ class UserController extends AbstractController
 
 		$data = [
 			'status' => JsonResponse::HTTP_CREATED,
-			'message' => 'L\'utilisateur a bien été ajouté'
+			'message' => 'User has been added to the database !'
 		];
 
 		return new JsonResponse($data, JsonResponse::HTTP_CREATED);
 	}
 
 	/**
+	 * @OA\Delete (
+	 *   path="/api/users/{id}",
+	 *   summary="Remove an existing user by his ID"
+	 * )
+	 * @OA\Response(
+	 *      response="204",
+	 *      description="Confirmation of user removal",
+	 * )
+	 * @OA\Response(response="401",description="Token Error")
+	 * @OA\Response(response="404", description="Error : App\\Entity\\Customer object not found by the @ParamConverterannotation")
 	 * @OA\Tag(name="Users")
 	 * @Route ("/{id}", name="delete_user", methods={"DELETE"})
 	 * @Security(name="Bearer")
@@ -137,7 +217,7 @@ class UserController extends AbstractController
 
 		$data = [
 			'status' => JsonResponse::HTTP_OK,
-			'message' => 'L\'utilisateur a bien supprimé'
+			'message' => 'User has been removed !'
 		];
 
 		return new JsonResponse($data, JsonResponse::HTTP_NO_CONTENT , [

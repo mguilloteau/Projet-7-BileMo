@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
 use OpenApi\Annotations as OA;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -43,6 +44,13 @@ class CustomerController extends AbstractController
 	}
 
 	/**
+	 * @OA\Get(
+	 *   path="/api/customers/{id}",
+	 *   summary="Get an existing customer by his ID"
+	 * )
+	 * @OA\Response(response="200", description="Get an object of the customer", @Model(type=Customer::class,groups={"list_customers"}))
+	 * @OA\Response(response="401",description="Token Error")
+	 * @OA\Response(response="404", description="Error : App\\Entity\\Customer object not found by the @ParamConverterannotation")
 	 * @OA\Tag(name="Customer")
 	 * @Route ("/{id}", name="details_customer", methods={"GET"})
 	 * @Security(name="Bearer")
@@ -60,8 +68,18 @@ class CustomerController extends AbstractController
 	}
 
 	/**
+	* @OA\Get(
+	*   path="/api/customers/",
+	*   summary="List the registered customers on page of 10",
+	*   @OA\Parameter(name="page",in="query", description="Page to filter by", required=false)
+	* )
+	* @OA\Response(response="200",description="List all customers (10 per page)",
+	*   		@OA\JsonContent(type="array",@OA\Items(ref=@Model(type=Customer::class, groups={"list_customers"})))
+	* )
+	* @OA\Response(response="401",description="Token Error")
+  * @OA\Response(response="404",description="There is no data present on this page. Try Again")
   * @OA\Tag(name="Customer")
-	* @Route("/{page<\d+>?1}", name="list_customer", methods={"GET"})
+	* @Route("/", name="list_customer", methods={"GET"})
   * @Security(name="Bearer")
 	* @param Request $request
 	* @return Response

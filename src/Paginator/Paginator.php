@@ -28,7 +28,7 @@
 			$items = $this->entityManager->getRepository($data)->findBy([], [], $limit, $limit * ($page - 1));
 
 			if(empty($items)) {
-				throw new NotFoundHttpException("Aucun article n'est disponible sur cette page");
+				throw new NotFoundHttpException("There is no data present on this page. Try Again");
 			}
 
 			(is_null($group)) ?
