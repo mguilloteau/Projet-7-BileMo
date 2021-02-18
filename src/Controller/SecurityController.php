@@ -11,7 +11,7 @@ class SecurityController extends AbstractController
     /**
 		 * @OA\Post(
 		 *   path="/api/login/",
-		 *   summary="Connexion à l'API BileMo",
+		 *   summary="Connection to the BileMo application",
 		 *   @OA\RequestBody(
 		 *       required=true,
 		 *       @OA\MediaType(

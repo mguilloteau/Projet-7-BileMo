@@ -89,7 +89,9 @@ class CustomerController extends AbstractController
 	{
 		$page = $this->paginator->getPage($request->query->get("page"));
 
-		$customers = $this->paginator->paginate(Customer::class, $page, 10,  'list_customers');
+		$customers = $this->entityManager->getRepository(Customer::class)->findAll();
+
+		$customers = $this->paginator->paginate($customers, $page, 10,  'list_customers');
 
 		return new Response($customers, Response::HTTP_OK ,[
 			"Content-Type" => "application/json"

@@ -13,6 +13,7 @@
         "doctrine/doctrine-migrations-bundle": "^3.0",
         "doctrine/orm": "^2.8",
         "fzaninotto/faker": "^1.9",
+        "knplabs/knp-paginator-bundle": "^5.4",
         "lexik/jwt-authentication-bundle": "^2.10",
         "nelmio/api-doc-bundle": "^4.1",
         "phpdocumentor/reflection-docblock": "^5.2",
@@ -34,7 +35,8 @@
         "symfony/validator": "5.2.*",
         "symfony/web-profiler-bundle": "5.2.*",
         "symfony/yaml": "5.2.*",
-        "willdurand/hateoas-bundle": "^2.1"
+        "willdurand/hateoas-bundle": "^2.1",
+        "ext-json": "*"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.4"

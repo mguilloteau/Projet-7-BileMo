@@ -4,21 +4,18 @@ namespace App\Controller;
 
 use App\Entity\Phone;
 use App\Paginator\Paginator;
+use App\Services\UpdaterService;
+use App\Validator\Validator;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Annotations as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Stopwatch\Stopwatch;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Contracts\Cache\ItemInterface;
-use Twig\Cache\CacheInterface;
 
 
 /**
@@ -32,25 +29,29 @@ class PhoneController extends AbstractController
 		private $entityManager;
 		private $validator;
 		private $paginator;
+		private $updateService;
 
 	/**
 	 * PhoneController constructor.
 	 * @param SerializerInterface $serializer
 	 * @param EntityManagerInterface $entityManager
-	 * @param ValidatorInterface $validator
+	 * @param Validator $validator
 	 * @param Paginator $paginator
+	 * @param UpdaterService $updateService
 	 */
 	public function __construct(
 		SerializerInterface $serializer,
 		EntityManagerInterface $entityManager,
-		ValidatorInterface $validator,
-		Paginator $paginator
+		Validator $validator,
+		Paginator $paginator,
+		UpdaterService $updateService
 	)
 		{
 			$this->serializer = $serializer;
 			$this->entityManager = $entityManager;
 			$this->validator = $validator;
 			$this->paginator = $paginator;
+			$this->updateService = $updateService;
 		}
 
 	/**
@@ -112,28 +113,15 @@ class PhoneController extends AbstractController
 	 * @Security(name="Bearer")
 	 * @param Request $request
 	 * @return Response
-	 * @throws \Psr\Cache\InvalidArgumentException
 	 */
-    public function getAllPhones(Request $request, Stopwatch $stopwatch) :
+    public function getAllPhones(Request $request) :
 		Response
     {
-    	$cache = new FilesystemAdapter();
+			$page = $this->paginator->getPage($request->query->get("page"));
 
-    	$page = $request->query->get("page");
+			$data = $this->entityManager->getRepository(Phone::class)->findAll();
 
-			if(is_null($page) || $page < 1) {
-				$page = 1;
-			}
-
-    	$key = 'phones?page=' . $page;
-
-    	$phones = $cache->get($key, function (ItemInterface $item) use ($page) {
-
-    		$item->expiresAfter(10);
-
-				return $this->paginator->paginate(Phone::class, $page, 10);
-
-			});
+    	$phones = $this->paginator->paginate($data, $page, 10);
 
 			return new Response($phones, Response::HTTP_OK ,[
 				"Content-Type" => "application/json"
@@ -186,35 +174,85 @@ class PhoneController extends AbstractController
 		public function addPhone(Request $request) :
 		JsonResponse
 		{
-
 			$data = $this->serializer->deserialize($request->getContent(), Phone::class, "json");
 
-			$errors = $this->validator->validate($data);
-
-			if(count($errors) > 0) {
-				$dataError = [
-					"code" => 400,
-					"error" => 'Error: Some data are incorrect or missing. Try Again.',
-				];
-				$messages = [];
-				foreach ($errors as $violation) {
-					$messages[$violation->getPropertyPath()][] = $violation->getMessage();
-				}
-				$dataError["error_details"] = [
-					$messages
-				];
-				return new JsonResponse($dataError, 400);
-			}
-
-			$this->entityManager->persist($data);
-			$this->entityManager->flush();
+			$this->validator->verifyThisData($data);
 
 			$data = [
-				'status' => JsonResponse::HTTP_CREATED,
-				'message' => 'Phone has been added !'
+				"status" => JsonResponse::HTTP_CREATED,
+				"message" => "Phone has been added !"
 			];
 
 			return new JsonResponse($data, JsonResponse::HTTP_CREATED);
+
+		}
+
+	/**
+	 * @OA\Put(
+	 *   path="/api/phones/{id}",
+	 *   summary="Update an existing phone",
+	 * 	 @OA\RequestBody(
+	 *       required=false,
+	 *       @OA\MediaType(
+	 *           mediaType="application/json",
+	 *           @OA\Schema(
+	 *               type="object",
+	 *               @OA\Property(
+	 *                   property="name",
+	 *                   description="Name of your phone",
+	 *                   type="string"
+	 *               ),
+	 *               @OA\Property(
+	 *                   property="price",
+	 *                   description="Price of your phone",
+	 *                   type="integer"
+	 *               ),
+	 *   						@OA\Property(
+	 *                   property="color",
+	 *                   description="Color of your phone",
+	 *                   type="string"
+	 *               ),
+	 *   						@OA\Property(
+	 *                   property="description",
+	 *                   description="Description of your phone",
+	 *                   type="string"
+	 *               )
+	 *           )
+	 *       )
+	 *    ),
+	 *   @OA\Parameter(
+	 *         description="ID of the phone",
+	 *         in="path",
+	 *         name="id",
+	 *         required=true,
+	 *         @OA\Schema(
+	 *           type="integer"
+	 *         )
+	 *     )
+	 * )
+	 * @OA\Response(response="201",description="Confirmation of phone update")
+	 * @OA\Response(response="400",description="Error: Some data are incorrect or missing. Try Again")
+	 * @OA\Response(response="401",description="Token Error")
+	 * @OA\Tag(name="Phones")
+	 * @Route("/{id}", name="update_phone", methods={"PUT"})
+	 * @Security(name="Bearer")
+	 * @param Request $request
+	 * @param Phone $phone
+	 * @return JsonResponse
+	 */
+		public function updatePhone(Request $request, Phone $phone): JsonResponse
+		{
+
+			$this->updateService->updateThisEntity($request, $phone);
+
+			$data = [
+				"status" => JsonResponse::HTTP_NO_CONTENT,
+				"message" => "Phone has been updated !"
+			];
+
+			return new JsonResponse($data, JsonResponse::HTTP_NO_CONTENT , [
+				"Content-Type" => "application/json"
+			]);
 
 		}
 
@@ -248,8 +286,8 @@ class PhoneController extends AbstractController
 		$this->entityManager->flush();
 
 		$data = [
-			'status' => JsonResponse::HTTP_OK,
-			'message' => 'This phone has been removed !'
+			"status" => JsonResponse::HTTP_OK,
+			"message" => "This phone has been removed !"
 		];
 
 		return new JsonResponse($data, JsonResponse::HTTP_NO_CONTENT , [
