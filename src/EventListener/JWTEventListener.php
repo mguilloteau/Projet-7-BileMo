@@ -7,6 +7,7 @@
 	use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTInvalidEvent;
 	use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTNotFoundEvent;
 	use Symfony\Component\HttpFoundation\JsonResponse;
+	use Symfony\Component\HttpFoundation\Response;
 
 	class JWTEventListener {
 
@@ -36,7 +37,7 @@
 				];
 			}
 
-			$response = new JsonResponse($dataResponse);
+			$response = new JsonResponse($dataResponse, $dataResponse["status"]);
 
 			$failureEvent->setResponse($response);
 		}

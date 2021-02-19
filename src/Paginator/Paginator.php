@@ -5,6 +5,7 @@
 	use Knp\Component\Pager\PaginatorInterface;
 	use Doctrine\ORM\EntityManagerInterface;
 	use JMS\Serializer\SerializationContext;
+	use Symfony\Component\HttpFoundation\Exception\JsonException;
 	use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 	use JMS\Serializer\SerializerInterface;
 
@@ -37,7 +38,8 @@
 			$items = $this->paginator->paginate($data, $page, (!is_null($limit)) ? $limit : 10 );
 
 			if(empty($items->getItems())) {
-				throw new NotFoundHttpException("There is no data present on this page. Try Again");
+
+				throw new JsonException("There is no data present on this page. Try Again");
 			}
 
 			(is_null($group)) ?

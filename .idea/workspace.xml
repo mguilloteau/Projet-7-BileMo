@@ -2,23 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="59ab75ce-9d8b-465f-bb4d-6edd9a60d58d" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/Services/UpdaterService.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Validator/Validator.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Voter/UserVoter.php" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../MéthodologieGit.docx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/api-test.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/api-test.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/composer.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/bundles.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/bundles.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/CustomerController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/CustomerController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Controller/PhoneController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/PhoneController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/SecurityController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/SecurityController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Controller/UserController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/UserController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/EventSubscriber/ExceptionSubscriber.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/EventSubscriber/ExceptionSubscriber.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/EventListener/JWTEventListener.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/EventListener/JWTEventListener.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Paginator/Paginator.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Paginator/Paginator.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/symfony.lock" beforeDir="false" afterPath="$PROJECT_DIR$/symfony.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -182,7 +171,8 @@
       <workItem from="1613118273955" duration="13128000" />
       <workItem from="1613552071923" duration="10477000" />
       <workItem from="1613640201177" duration="5585000" />
-      <workItem from="1613650048783" duration="12224000" />
+      <workItem from="1613650048783" duration="12928000" />
+      <workItem from="1613719580222" duration="4519000" />
     </task>
     <servers />
   </component>

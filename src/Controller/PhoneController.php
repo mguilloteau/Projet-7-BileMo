@@ -83,9 +83,7 @@ class PhoneController extends AbstractController
 		{
 			$data = $this->serializer->serialize($phone, "json");
 
-			return new Response($data, Response::HTTP_OK , [
-				"Content-Type" => "application/json"
-			]);
+			return new JsonResponse($data, Response::HTTP_OK);
 		}
 
 	/**
@@ -123,9 +121,7 @@ class PhoneController extends AbstractController
 
     	$phones = $this->paginator->paginate($data, $page, 10);
 
-			return new Response($phones, Response::HTTP_OK ,[
-				"Content-Type" => "application/json"
-			]);
+			return new JsonResponse($phones, Response::HTTP_OK);
     }
 
 	/**
@@ -178,12 +174,7 @@ class PhoneController extends AbstractController
 
 			$this->validator->verifyThisData($data);
 
-			$data = [
-				"status" => JsonResponse::HTTP_CREATED,
-				"message" => "Phone has been added !"
-			];
-
-			return new JsonResponse($data, JsonResponse::HTTP_CREATED);
+			return new JsonResponse(["status" => Response::HTTP_CREATED, "message" => "Phone has been added !"], Response::HTTP_CREATED);
 
 		}
 
@@ -245,14 +236,7 @@ class PhoneController extends AbstractController
 
 			$this->updateService->updateThisEntity($request, $phone);
 
-			$data = [
-				"status" => JsonResponse::HTTP_NO_CONTENT,
-				"message" => "Phone has been updated !"
-			];
-
-			return new JsonResponse($data, JsonResponse::HTTP_NO_CONTENT , [
-				"Content-Type" => "application/json"
-			]);
+			return new JsonResponse(["status" => Response::HTTP_NO_CONTENT, "message" => "Phone has been updated !"], Response::HTTP_NO_CONTENT);
 
 		}
 
@@ -285,13 +269,6 @@ class PhoneController extends AbstractController
 		$this->entityManager->remove($phone);
 		$this->entityManager->flush();
 
-		$data = [
-			"status" => JsonResponse::HTTP_OK,
-			"message" => "This phone has been removed !"
-		];
-
-		return new JsonResponse($data, JsonResponse::HTTP_NO_CONTENT , [
-			"Content-Type" => "application/json"
-		]);
+		return new JsonResponse(["status" => Response::HTTP_OK, "message" => "This phone has been removed !"], Response::HTTP_OK);
 	}
 }

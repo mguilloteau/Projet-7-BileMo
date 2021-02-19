@@ -80,9 +80,7 @@ class UserController extends AbstractController
 
 		$data = $this->serializer->serialize($user, "json", SerializationContext::create()->setGroups(["list_users"]));
 
-		return new JsonResponse($data, Response::HTTP_OK , [
-			"Content-Type" => "application/json"
-		]);
+		return new JsonResponse($data, Response::HTTP_OK);
 	}
 
 	/**
@@ -123,14 +121,12 @@ class UserController extends AbstractController
 		}
 
 		if(empty($data))
-			throw new JsonException("You have no user associated with your account. Please create some !", Response::HTTP_NOT_FOUND);
+			throw new JsonException(["status" => Response::HTTP_NOT_FOUND, "message" => "You have no user associated with your account. Please create some !"], Response::HTTP_NOT_FOUND);
 
 
 		$users = $this->paginator->paginate($data, $this->paginator->getPage($request->query->get("page")), 10,"list_users");
 
-		return new JsonResponse($users, Response::HTTP_OK ,[
-			"Content-Type" => "application/json"
-		]);
+		return new JsonResponse($users, Response::HTTP_OK);
 	}
 
 	/**
@@ -184,12 +180,15 @@ class UserController extends AbstractController
 
 		$data = $this->serializer->deserialize($request->getContent(), User::class, "json");
 
+		$data->setCustomer($this->getUser());
+
 		$this->validator->verifyThisData($data);
 
 		$this->entityManager->persist($data);
 		$this->entityManager->flush();
 
-		return new JsonResponse("User has been added to the database !", JsonResponse::HTTP_CREATED);
+
+		return new JsonResponse(["status" => Response::HTTP_CREATED, "message" => "User has been added to the database !"], Response::HTTP_CREATED);
 	}
 
 	/**
@@ -252,8 +251,7 @@ class UserController extends AbstractController
 
 		$this->updateService->updateThisEntity($request, $user);
 
-		return new JsonResponse(["status" => Response::HTTP_OK, "message" => "User : " . $user->getId() . " has been updated !"],
-		Response::HTTP_OK, ["Content-Type" => "application/json"]);
+		return new JsonResponse(["status" => Response::HTTP_OK, "message" => "User : " . $user->getId() . " has been updated !"], Response::HTTP_OK);
 	}
 
 	/**
@@ -281,7 +279,6 @@ class UserController extends AbstractController
 		$this->entityManager->remove($user);
 		$this->entityManager->flush();
 
-		return new JsonResponse(["status" => Response::HTTP_OK, "message"=> "User : has been removed !"],
-			Response::HTTP_OK, ["Content-Type" => "application/json"]);
+		return new JsonResponse(["status" => Response::HTTP_OK, "message"=> "User : has been removed !"], Response::HTTP_OK);
 	}
 }
