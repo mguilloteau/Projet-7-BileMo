@@ -15,7 +15,16 @@ use JMS\Serializer\Annotation as Serializer;
  *          parameters = { "id" = "expr(object.getId())" },
  *   				absolute= true
  *      ),
- *   exclusion = @Hateoas\Exclusion(groups={"list_customers","list_users"})
+ *   exclusion = @Hateoas\Exclusion(groups={"list_users"})
+ * )
+ * @Hateoas\Relation(
+ *      "update",
+ *      href = @Hateoas\Route(
+ *          "update_user",
+ *          parameters = { "id" = "expr(object.getId())" },
+ *   				absolute= true
+ *      ),
+ *   exclusion = @Hateoas\Exclusion(groups={"list_users"})
  * )
  * @Hateoas\Relation(
  *      "delete",
@@ -24,7 +33,7 @@ use JMS\Serializer\Annotation as Serializer;
  *          parameters = { "id" = "expr(object.getId())" },
  *   				absolute= true
  *      ),
- *   exclusion = @Hateoas\Exclusion(groups={"list_customers","list_users"})
+ *   exclusion = @Hateoas\Exclusion(groups={"list_users"})
  * )
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */
@@ -34,31 +43,31 @@ class User
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-		 * @Serializer\Groups({"list_customers","list_users"})
+		 * @Serializer\Groups({"list_users"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-		 * @Serializer\Groups({"list_customers","list_users"})
+		 * @Serializer\Groups({"list_users"})
      */
     private $username;
 
     /**
      * @ORM\Column(type="string", length=255)
-		 * @Serializer\Groups({"list_customers","list_users"})
+		 * @Serializer\Groups({"list_users"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
-		 * @Serializer\Groups({"list_customers","list_users"})
+		 * @Serializer\Groups({"list_users"})
      */
     private $surname;
 
     /**
      * @ORM\Column(type="string", length=255)
-		 * @Serializer\Groups({"list_customers","list_users"})
+		 * @Serializer\Groups({"list_users"})
      */
     private $email;
 

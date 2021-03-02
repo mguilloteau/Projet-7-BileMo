@@ -3,27 +3,12 @@
 namespace App\Entity;
 
 use App\Repository\CustomerRepository;
-use Hateoas\Configuration\Annotation as Hateoas;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * @Hateoas\Relation(
- *      "self",
- *      href = @Hateoas\Route(
- *          "details_customer",
- *          parameters = { "id" = "expr(object.getId())" },
- *   				absolute= true
- *      ),
- *   exclusion = @Hateoas\Exclusion(groups={"list_customers","list_users"})
- * )
- * @Hateoas\Relation(
- *     "users",
- *     embedded = @Hateoas\Embedded("expr(object.getUsers())")
- * )
  * @ORM\Entity(repositoryClass=CustomerRepository::class)
  */
 class Customer implements UserInterface
@@ -32,19 +17,16 @@ class Customer implements UserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-		 * @Serializer\Groups({"list_customers"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-		 * @Serializer\Groups({"list_customers"})
      */
     private $username;
 
     /**
      * @ORM\Column(type="json")
-		 * @Serializer\Groups({"list_customers"})
      */
     private $roles = [];
 
@@ -56,7 +38,6 @@ class Customer implements UserInterface
 
     /**
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="customer")
-		 * @Serializer\Groups({"list_customers"})
      */
     private $users;
 

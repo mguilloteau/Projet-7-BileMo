@@ -2,8 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Customer;
-use App\Entity\Phone;
 use App\Entity\User;
 use App\Paginator\Paginator;
 use App\Services\UpdaterService;
@@ -15,11 +13,13 @@ use OpenApi\Annotations as OA;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\HttpFoundation\Exception\JsonException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * @Route("/api/users")
@@ -33,6 +33,7 @@ class UserController extends AbstractController
 	private $validator;
 	private $paginator;
 	private $updateService;
+	private $cache;
 
 	/**
 	 * PhoneController constructor.
@@ -41,13 +42,15 @@ class UserController extends AbstractController
 	 * @param Validator $validator
 	 * @param Paginator $paginator
 	 * @param UpdaterService $updateService
+	 * @param AdapterInterface $cache
 	 */
 	public function __construct(
 		SerializerInterface $serializer,
 		EntityManagerInterface $entityManager,
 		Validator $validator,
 		Paginator $paginator,
-		UpdaterService $updateService
+		UpdaterService $updateService,
+		AdapterInterface $cache
 	)
 	{
 		$this->serializer = $serializer;
@@ -55,6 +58,7 @@ class UserController extends AbstractController
 		$this->validator = $validator;
 		$this->paginator = $paginator;
 		$this->updateService = $updateService;
+		$this->cache = $cache;
 	}
 
 	/**
@@ -80,7 +84,7 @@ class UserController extends AbstractController
 
 		$data = $this->serializer->serialize($user, "json", SerializationContext::create()->setGroups(["list_users"]));
 
-		return new JsonResponse($data, Response::HTTP_OK);
+		return new Response($data, Response::HTTP_OK , ["Content-Type" => "application/json"]);
 	}
 
 	/**
@@ -112,21 +116,22 @@ class UserController extends AbstractController
 	 */
 	public function getAllUsers(Request $request): Response
 	{
-		$customer = $this->getUser();
-
-		$data = [];
-
-		foreach ($customer->getUsers() as $user) {
-			$data[] = $user;
-		}
+		$data = $this->cache->get("users".$this->getUser()->getUsername(), function (ItemInterface $item) {
+			$items = [];
+			foreach ($this->getUser()->getUsers() as $user) {
+				$items[] = $user;
+			}
+			$item->expiresAfter(3600);
+			$item->set($items);
+			return $item->get();
+		});
 
 		if(empty($data))
 			throw new JsonException(["status" => Response::HTTP_NOT_FOUND, "message" => "You have no user associated with your account. Please create some !"], Response::HTTP_NOT_FOUND);
-
-
+		
 		$users = $this->paginator->paginate($data, $this->paginator->getPage($request->query->get("page")), 10,"list_users");
 
-		return new JsonResponse($users, Response::HTTP_OK);
+		return new Response($users, Response::HTTP_OK , ["Content-Type" => "application/json"]);
 	}
 
 	/**
@@ -177,7 +182,6 @@ class UserController extends AbstractController
 	*/
 	public function addUser(Request $request) : JsonResponse
 	{
-
 		$data = $this->serializer->deserialize($request->getContent(), User::class, "json");
 
 		$data->setCustomer($this->getUser());
@@ -186,7 +190,6 @@ class UserController extends AbstractController
 
 		$this->entityManager->persist($data);
 		$this->entityManager->flush();
-
 
 		return new JsonResponse(["status" => Response::HTTP_CREATED, "message" => "User has been added to the database !"], Response::HTTP_CREATED);
 	}

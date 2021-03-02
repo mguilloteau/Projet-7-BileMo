@@ -16,14 +16,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *   				absolute= true
  *      )
  * )
- *  * @Hateoas\Relation(
- *      "delete",
- *      href = @Hateoas\Route(
- *          "delete_phone",
- *          parameters = { "id" = "expr(object.getId())" },
- *   				absolute= true
- *      )
- * )
  * @ORM\Entity(repositoryClass=PhoneRepository::class)
  */
 class Phone
