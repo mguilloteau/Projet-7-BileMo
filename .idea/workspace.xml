@@ -2,18 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="59ab75ce-9d8b-465f-bb4d-6edd9a60d58d" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../MéthodologieGit.docx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/packages/dev/jms_serializer.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/dev/jms_serializer.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/CustomerController.php" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Controller/PhoneController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/PhoneController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Controller/UserController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/UserController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/Customer.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Customer.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/Phone.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Phone.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Entity/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/User.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/EventListener/JWTEventListener.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/EventListener/JWTEventListener.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Paginator/Paginator.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Paginator/Paginator.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Services/UpdaterService.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Services/UpdaterService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Validator/Validator.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Validator/Validator.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -199,7 +194,9 @@
       <workItem from="1614241563139" duration="5774000" />
       <workItem from="1614329499127" duration="922000" />
       <workItem from="1614586563884" duration="7329000" />
-      <workItem from="1614680454729" duration="1871000" />
+      <workItem from="1614680454729" duration="2131000" />
+      <workItem from="1614760781585" duration="7728000" />
+      <workItem from="1614865802608" duration="2005000" />
     </task>
     <servers />
   </component>

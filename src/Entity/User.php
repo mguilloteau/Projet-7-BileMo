@@ -6,6 +6,7 @@ use App\Repository\UserRepository;
 use Hateoas\Configuration\Annotation as Hateoas;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @Hateoas\Relation(
@@ -49,24 +50,37 @@ class User
 
     /**
      * @ORM\Column(type="string", length=255)
+		 * @Assert\NotBlank(message="This field can't be blank")
+		 * @Assert\Length(
+		 *   min="6",
+		 *   minMessage="This field must contain a minimum of 6 characters",
+		 *   max="18",
+		 *   maxMessage="This field must contain a maximum of 18 characters"
+		 * )
 		 * @Serializer\Groups({"list_users"})
      */
     private $username;
 
     /**
      * @ORM\Column(type="string", length=255)
+		 * @Assert\NotBlank(message="This field can't be blank")
 		 * @Serializer\Groups({"list_users"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
+		 * @Assert\NotBlank(message="This field can't be blank")
 		 * @Serializer\Groups({"list_users"})
      */
     private $surname;
 
     /**
      * @ORM\Column(type="string", length=255)
+		 * @Assert\NotBlank(message="This field can't be blank")
+		 * @Assert\Email(
+		 *     message = "The email '{{ value }}' is not a valid email."
+		 * )
 		 * @Serializer\Groups({"list_users"})
      */
     private $email;

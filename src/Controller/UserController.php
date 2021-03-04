@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Paginator\Paginator;
 use App\Services\UpdaterService;
-use App\Validator\Validator;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
@@ -30,7 +29,6 @@ class UserController extends AbstractController
 
 	private $serializer;
 	private $entityManager;
-	private $validator;
 	private $paginator;
 	private $updateService;
 	private $cache;
@@ -39,7 +37,6 @@ class UserController extends AbstractController
 	 * PhoneController constructor.
 	 * @param SerializerInterface $serializer
 	 * @param EntityManagerInterface $entityManager
-	 * @param Validator $validator
 	 * @param Paginator $paginator
 	 * @param UpdaterService $updateService
 	 * @param AdapterInterface $cache
@@ -47,7 +44,6 @@ class UserController extends AbstractController
 	public function __construct(
 		SerializerInterface $serializer,
 		EntityManagerInterface $entityManager,
-		Validator $validator,
 		Paginator $paginator,
 		UpdaterService $updateService,
 		AdapterInterface $cache
@@ -55,7 +51,6 @@ class UserController extends AbstractController
 	{
 		$this->serializer = $serializer;
 		$this->entityManager = $entityManager;
-		$this->validator = $validator;
 		$this->paginator = $paginator;
 		$this->updateService = $updateService;
 		$this->cache = $cache;
@@ -186,10 +181,13 @@ class UserController extends AbstractController
 
 		$data->setCustomer($this->getUser());
 
-		$this->validator->verifyThisData($data);
+		$errors = $this->updateService->addObject($data);
 
-		$this->entityManager->persist($data);
-		$this->entityManager->flush();
+		if(is_array($errors)) {
+			return new JsonResponse($errors, Response::HTTP_BAD_REQUEST);
+		}
+
+		$this->cache->delete("users".$this->getUser()->getUsername());
 
 		return new JsonResponse(["status" => Response::HTTP_CREATED, "message" => "User has been added to the database !"], Response::HTTP_CREATED);
 	}
@@ -237,7 +235,7 @@ class UserController extends AbstractController
 	 *         )
 	 *     )
 	 * )
-	 * @OA\Response(response="201",description="Confirmation of user update")
+	 * @OA\Response(response="200",description="Confirmation of user update")
 	 * @OA\Response(response="400",description="Error: Some data are incorrect or missing. Try Again")
 	 * @OA\Response(response="401",description="Token Error")
 	 * @OA\Tag(name="Users")
@@ -249,10 +247,15 @@ class UserController extends AbstractController
 	 */
 	public function updateUser(Request $request, User $user): JsonResponse
 	{
-
 		$this->denyAccessUnlessGranted("update", $user);
 
-		$this->updateService->updateThisEntity($request, $user);
+		$updated = $this->updateService->updateThisEntry($request, $user);
+
+		if(is_array($updated)) {
+			return new JsonResponse($updated, Response::HTTP_BAD_REQUEST);
+		}
+
+		$this->cache->delete("users".$this->getUser()->getUsername());
 
 		return new JsonResponse(["status" => Response::HTTP_OK, "message" => "User : " . $user->getId() . " has been updated !"], Response::HTTP_OK);
 	}
@@ -282,6 +285,8 @@ class UserController extends AbstractController
 		$this->entityManager->remove($user);
 		$this->entityManager->flush();
 
-		return new JsonResponse(["status" => Response::HTTP_OK, "message"=> "User : has been removed !"], Response::HTTP_OK);
+		$this->cache->delete("users".$this->getUser()->getUsername());
+
+		return new JsonResponse(["status" => Response::HTTP_NO_CONTENT, "message"=> "User has been removed !"], Response::HTTP_OK);
 	}
 }

@@ -4,8 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Phone;
 use App\Paginator\Paginator;
-use App\Services\UpdaterService;
-use App\Validator\Validator;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
@@ -28,34 +26,26 @@ class PhoneController extends AbstractController
 
 		private $serializer;
 		private $entityManager;
-		private $validator;
 		private $paginator;
-		private $updateService;
 		private $cache;
 
 	/**
 	 * PhoneController constructor.
 	 * @param SerializerInterface $serializer
 	 * @param EntityManagerInterface $entityManager
-	 * @param Validator $validator
 	 * @param Paginator $paginator
-	 * @param UpdaterService $updateService
 	 * @param AdapterInterface $cache
 	 */
 	public function __construct(
 		SerializerInterface $serializer,
 		EntityManagerInterface $entityManager,
-		Validator $validator,
 		Paginator $paginator,
-		UpdaterService $updateService,
 		AdapterInterface $cache
 	)
 		{
 			$this->serializer = $serializer;
 			$this->entityManager = $entityManager;
-			$this->validator = $validator;
 			$this->paginator = $paginator;
-			$this->updateService = $updateService;
 			$this->cache = $cache;
 		}
 
