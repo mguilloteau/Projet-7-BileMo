@@ -4,8 +4,6 @@ Conception d'une API pour BileMo, une entreprise offrant toute une sélection de
 
 Les diagrammes UML demandés `UML_Diagrammes/` se trouvent à la racine du projet.
 
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/c765c067cd1a4df7823062a519fe3e4e)](https://www.codacy.com/gh/ProfesseurOrme/Snow_Tricks/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ProfesseurOrme/Snow_Tricks&amp;utm_campaign=Badge_Grade)
-
 ## Environnement utilisé durant le développement
 * [Symfony 5.2.3](https://symfony.com/doc/current/setup.html) 
 * [Composer 2.0.9](https://getcomposer.org/doc/00-intro.md)
@@ -40,7 +38,7 @@ Les diagrammes UML demandés `UML_Diagrammes/` se trouvent à la racine du proje
 ```
     php bin/console doctrine:migrations:migrate
 ```
-6- Installer des données fictives avec des fixtures pour agrémenter le site :
+6- Installer des données fictives avec des fixtures pour agrémenter l'api :
 ```
     php bin/console doctrine:fixtures:load
 ```
