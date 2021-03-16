@@ -6,6 +6,7 @@
 	use Symfony\Component\HttpFoundation\Exception\JsonException;
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
+	use Symfony\Component\HttpKernel\Exception\HttpException;
 
 	class UpdaterService {
 
@@ -19,14 +20,10 @@
 
 		public function addObject(object $data) {
 
-			try {
-				$errors = $this->validator->verifyThisData($data);
+			$errors = $this->validator->verifyThisData($data);
 
-				if(is_array($errors)) {
-					return $errors;
-				}
-			} catch(\Throwable $e) {
-				throw new JsonException("One of your value submitted is incorrect. Please read the doc @ 'api/doc/' and try again ! ", Response::HTTP_BAD_REQUEST);
+			if(is_array($errors)) {
+				return $errors;
 			}
 
 			$this->entityManager->persist($data);
@@ -36,28 +33,29 @@
 		}
 
 		public function updateThisEntry(Request $request, object $entity) {
-
 			$data = json_decode($request->getContent());
 
-			try {
-				foreach ($data as $key => $value) {
-					if ($key && !empty($value)) {
-						$name = ucfirst($key);
-						$setter = 'set'.$name;
-						if (method_exists($entity, $setter)) {
-							$entity->$setter($value);
-						}
+			$entryUpdated = 0;
+
+			foreach ($data as $key => $value) {
+				if ($key && !empty($value)) {
+					$name = ucfirst($key);
+					$setter = 'set'.$name;
+					if (method_exists($entity, $setter)) {
+						$entity->$setter($value);
+						$entryUpdated ++;
 					}
 				}
+			}
 
-				$errors = $this->validator->verifyThisData($entity);
+			if($entryUpdated === 0) {
+				throw new HttpException(Response::HTTP_BAD_REQUEST, "No data transmitted. Please refer to the documentation @ /api/doc");
+			}
 
-				if(is_array($errors)) {
-					return $errors;
-				}
+			$errors = $this->validator->verifyThisData($entity);
 
-			} catch(\Throwable $e) {
-				throw new JsonException("One of your value submitted is incorrect. Please read the doc @ 'api/doc/' and try again ! ", Response::HTTP_BAD_REQUEST);
+			if(is_array($errors)) {
+				return $errors;
 			}
 
 			$this->entityManager->flush();

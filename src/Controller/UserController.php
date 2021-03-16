@@ -17,8 +17,10 @@ use Symfony\Component\HttpFoundation\Exception\JsonException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
 
 /**
  * @Route("/api/users")
@@ -169,6 +171,7 @@ class UserController extends AbstractController
 	* )
 	* @OA\Response(response="400",description="Error: Some data are incorrect or missing. Try Again.")
 	* @OA\Response(response="401",description="Token Error")
+	* @OA\Response(response="500",description="The requested data is missing or incorrect. Please refer to the documentation @ /api/doc/")
   * @OA\Tag(name="Users")
 	* @Route ("/", name="add_user", methods={"POST"})
   * @Security(name="Bearer")
@@ -177,17 +180,22 @@ class UserController extends AbstractController
 	*/
 	public function addUser(Request $request) : JsonResponse
 	{
-		$data = $this->serializer->deserialize($request->getContent(), User::class, "json");
+		try {
+			$data = $this->serializer->deserialize($request->getContent(), User::class, "json");
 
-		$data->setCustomer($this->getUser());
+			$data->setCustomer($this->getUser());
 
-		$errors = $this->updateService->addObject($data);
+			$errors = $this->updateService->addObject($data);
 
-		if(is_array($errors)) {
-			return new JsonResponse($errors, Response::HTTP_BAD_REQUEST);
+			if (is_array($errors)) {
+				return new JsonResponse($errors, Response::HTTP_BAD_REQUEST);
+			}
+
+			$this->cache->delete("users".$this->getUser()->getUsername());
+
+		} catch (\Throwable $exception) {
+			throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, "The requested data is missing or incorrect. Please refer to the documentation @ /api/doc/");
 		}
-
-		$this->cache->delete("users".$this->getUser()->getUsername());
 
 		return new JsonResponse(["status" => Response::HTTP_CREATED, "message" => "User has been added to the database !"], Response::HTTP_CREATED);
 	}
@@ -236,8 +244,9 @@ class UserController extends AbstractController
 	 *     )
 	 * )
 	 * @OA\Response(response="200",description="Confirmation of user update")
-	 * @OA\Response(response="400",description="Error: Some data are incorrect or missing. Try Again")
+	 * @OA\Response(response="400",description="Error: Some data are incorrect or missing. Try Again / The requested data is missing or incorrect. Please refer to documentation @ /api/doc/")
 	 * @OA\Response(response="401",description="Token Error")
+	 * @OA\Response(response="500",description="The requested data is missing or incorrect. Please refer to the documentation @ /api/doc/")
 	 * @OA\Tag(name="Users")
 	 * @Route("/{id}", name="update_user", methods={"PUT"})
 	 * @Security(name="Bearer")
@@ -247,15 +256,20 @@ class UserController extends AbstractController
 	 */
 	public function updateUser(Request $request, User $user): JsonResponse
 	{
-		$this->denyAccessUnlessGranted("update", $user);
+		try {
+			$this->denyAccessUnlessGranted("update", $user);
 
-		$updated = $this->updateService->updateThisEntry($request, $user);
+			$updated = $this->updateService->updateThisEntry($request, $user);
 
-		if(is_array($updated)) {
-			return new JsonResponse($updated, Response::HTTP_BAD_REQUEST);
+			if(is_array($updated)) {
+				return new JsonResponse($updated, Response::HTTP_BAD_REQUEST);
+			}
+
+			$this->cache->delete("users".$this->getUser()->getUsername());
+
+		} catch (\Throwable $exception) {
+			throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, "The requested data is missing or incorrect. Please refer to the documentation @ /api/doc/");
 		}
-
-		$this->cache->delete("users".$this->getUser()->getUsername());
 
 		return new JsonResponse(["status" => Response::HTTP_OK, "message" => "User : " . $user->getId() . " has been updated !"], Response::HTTP_OK);
 	}
@@ -287,6 +301,7 @@ class UserController extends AbstractController
 
 		$this->cache->delete("users".$this->getUser()->getUsername());
 
-		return new JsonResponse(["status" => Response::HTTP_NO_CONTENT, "message"=> "User has been removed !"], Response::HTTP_OK);
+		return new JsonResponse(["status" => Response::HTTP_NO_CONTENT, "message"=> "User has been removed !"],
+			Response::HTTP_NO_CONTENT);
 	}
 }

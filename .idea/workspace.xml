@@ -4,9 +4,7 @@
     <list default="true" id="59ab75ce-9d8b-465f-bb4d-6edd9a60d58d" name="Default Changelist" comment="">
       <change afterPath="$PROJECT_DIR$/../MéthodologieGit.docx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/PhoneController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/PhoneController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Controller/UserController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/UserController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/User.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Services/UpdaterService.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Services/UpdaterService.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Validator/Validator.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Validator/Validator.php" afterDir="false" />
     </list>
@@ -197,6 +195,18 @@
       <workItem from="1614680454729" duration="2131000" />
       <workItem from="1614760781585" duration="7728000" />
       <workItem from="1614865802608" duration="2133000" />
+      <workItem from="1614871204409" duration="520000" />
+      <workItem from="1614932347434" duration="816000" />
+      <workItem from="1615195224279" duration="210000" />
+      <workItem from="1615196199916" duration="346000" />
+      <workItem from="1615276664542" duration="92000" />
+      <workItem from="1615297014586" duration="376000" />
+      <workItem from="1615301942133" duration="259000" />
+      <workItem from="1615303072469" duration="1000" />
+      <workItem from="1615555852384" duration="129000" />
+      <workItem from="1615557476457" duration="259000" />
+      <workItem from="1615899566785" duration="253000" />
+      <workItem from="1615900386857" duration="3487000" />
     </task>
     <servers />
   </component>

@@ -27,6 +27,7 @@
 			if(count($errors) > 0) {
 
 				$dataError = [
+					"code" => Response::HTTP_BAD_REQUEST,
 					"error" => 'Error: Some data are incorrect or missing. Try Again.',
 				];
 				$messages = [];
