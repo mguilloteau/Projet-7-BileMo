@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Cache\CacheData;
 use App\Entity\User;
 use App\Paginator\Paginator;
 use App\Services\UpdaterService;
@@ -41,14 +42,14 @@ class UserController extends AbstractController
 	 * @param EntityManagerInterface $entityManager
 	 * @param Paginator $paginator
 	 * @param UpdaterService $updateService
-	 * @param AdapterInterface $cache
+	 * @param CacheData $cache
 	 */
 	public function __construct(
 		SerializerInterface $serializer,
 		EntityManagerInterface $entityManager,
 		Paginator $paginator,
 		UpdaterService $updateService,
-		AdapterInterface $cache
+		CacheData $cache
 	)
 	{
 		$this->serializer = $serializer;
@@ -113,19 +114,10 @@ class UserController extends AbstractController
 	 */
 	public function getAllUsers(Request $request): Response
 	{
-		$data = $this->cache->get("users".$this->getUser()->getUsername(), function (ItemInterface $item) {
-			$items = [];
-			foreach ($this->getUser()->getUsers() as $user) {
-				$items[] = $user;
-			}
-			$item->expiresAfter(3600);
-			$item->set($items);
-			return $item->get();
-		});
+		$query = $this->entityManager->getRepository(User::class)->findUsersPerCustomers($this->getUser()->getUsername());
 
-		if(empty($data))
-			throw new JsonException(["status" => Response::HTTP_NOT_FOUND, "message" => "You have no user associated with your account. Please create some !"], Response::HTTP_NOT_FOUND);
-		
+		$data = $this->cache->getDataCached("users".$this->getUser()->getUsername(), $query);
+
 		$users = $this->paginator->paginate($data, $this->paginator->getPage($request->query->get("page")), 10,"list_users");
 
 		return new Response($users, Response::HTTP_OK , ["Content-Type" => "application/json"]);
@@ -191,7 +183,7 @@ class UserController extends AbstractController
 				return new JsonResponse($errors, Response::HTTP_BAD_REQUEST);
 			}
 
-			$this->cache->delete("users".$this->getUser()->getUsername());
+			$this->cache->deleteCache("users".$this->getUser()->getUsername());
 
 		} catch (\Throwable $exception) {
 			throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, "The requested data is missing or incorrect. Please refer to the documentation @ /api/doc/");
@@ -265,7 +257,7 @@ class UserController extends AbstractController
 				return new JsonResponse($updated, Response::HTTP_BAD_REQUEST);
 			}
 
-			$this->cache->delete("users".$this->getUser()->getUsername());
+			$this->cache->deleteCache("users".$this->getUser()->getUsername());
 
 		} catch (\Throwable $exception) {
 			throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, "The requested data is missing or incorrect. Please refer to the documentation @ /api/doc/");
@@ -299,9 +291,9 @@ class UserController extends AbstractController
 		$this->entityManager->remove($user);
 		$this->entityManager->flush();
 
-		$this->cache->delete("users".$this->getUser()->getUsername());
+		$this->cache->deleteCache("users".$this->getUser()->getUsername());
 
-		return new JsonResponse(["status" => Response::HTTP_NO_CONTENT, "message"=> "User has been removed !"],
+		return new JsonResponse(["status" => Response::HTTP_OK, "message" => "User has been removed !"],
 			Response::HTTP_NO_CONTENT);
 	}
 }

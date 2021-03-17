@@ -2,11 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="59ab75ce-9d8b-465f-bb4d-6edd9a60d58d" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/Cache/CacheData.php" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../MéthodologieGit.docx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/PhoneController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/PhoneController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Controller/UserController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/UserController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Services/UpdaterService.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Services/UpdaterService.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Validator/Validator.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Validator/Validator.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Repository/UserRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/UserRepository.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -206,7 +207,8 @@
       <workItem from="1615555852384" duration="129000" />
       <workItem from="1615557476457" duration="259000" />
       <workItem from="1615899566785" duration="253000" />
-      <workItem from="1615900386857" duration="3487000" />
+      <workItem from="1615900386857" duration="3741000" />
+      <workItem from="1615970625048" duration="3842000" />
     </task>
     <servers />
   </component>

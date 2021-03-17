@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Cache\CacheData;
 use App\Entity\Phone;
 use App\Paginator\Paginator;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Cache\ItemInterface;
 
@@ -34,13 +36,13 @@ class PhoneController extends AbstractController
 	 * @param SerializerInterface $serializer
 	 * @param EntityManagerInterface $entityManager
 	 * @param Paginator $paginator
-	 * @param AdapterInterface $cache
+	 * @param CacheData $cache
 	 */
 	public function __construct(
 		SerializerInterface $serializer,
 		EntityManagerInterface $entityManager,
 		Paginator $paginator,
-		AdapterInterface $cache
+		CacheData $cache
 	)
 		{
 			$this->serializer = $serializer;
@@ -110,15 +112,10 @@ class PhoneController extends AbstractController
     public function getAllPhones(Request $request) :
 		Response
     {
-			$page = $this->paginator->getPage($request->query->get("page"));
-			$data = $value = $this->cache->get('my_cache_key', function (ItemInterface $item) {
-				$item->expiresAfter(3600);
-				$item->set($this->entityManager->getRepository(Phone::class)->findAll());
-				$this->cache->save($item);
-				return $item->get();
-			});
 
-    	$phones = $this->paginator->paginate($data, $page, 10);
+			$data = $this->cache->getDataCached('phones', $this->entityManager->getRepository(Phone::class)->findAll());
+
+    	$phones = $this->paginator->paginate($data, $this->paginator->getPage($request->query->get("page")), 10);
 
 			return new Response($phones, Response::HTTP_OK , ["Content-Type" => "application/json"]);
     }
