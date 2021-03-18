@@ -13,15 +13,11 @@ use OpenApi\Annotations as OA;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Cache\Adapter\AdapterInterface;
-use Symfony\Component\HttpFoundation\Exception\JsonException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\Cache\ItemInterface;
-use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
 
 /**
  * @Route("/api/users")
@@ -70,6 +66,7 @@ class UserController extends AbstractController
 	*   		@Model(type=User::class, groups={"list_users"})
 	* )
 	* @OA\Response(response="401",description="Token Error")
+  * @OA\Response(response="404",description="App\\Entity\\Phone object not found by the @ParamConverter annotation.")
   * @OA\Tag(name="Users")
 	* @Route("/{id}", name="details_user", methods={"GET"})
   * @Security(name="Bearer")
@@ -118,7 +115,7 @@ class UserController extends AbstractController
 
 		$data = $this->cache->getDataCached("users".$this->getUser()->getUsername(), $query);
 
-		$users = $this->paginator->paginate($data, $this->paginator->getPage($request->query->get("page")), 10,"list_users");
+		$users = $this->paginator->paginate($data, $this->paginator->getPage($request->query->get("page")), (!is_null($request->get("page"))) ? 10 : null,"list_users");
 
 		return new Response($users, Response::HTTP_OK , ["Content-Type" => "application/json"]);
 	}

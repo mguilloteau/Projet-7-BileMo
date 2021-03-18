@@ -9,25 +9,24 @@
 	use Symfony\Component\Cache\CacheItem;
 	use Symfony\Component\HttpFoundation\Exception\JsonException;
 	use JMS\Serializer\SerializerInterface;
+	use Symfony\Component\HttpFoundation\Response;
+	use Symfony\Component\HttpKernel\Exception\HttpException;
 
 	class Paginator {
 
 		private $entityManager;
 		private $serializer;
 		private $paginator;
-		private $cache;
 
 		public function __construct(
 			EntityManagerInterface $entityManager,
 			SerializerInterface $serializer,
-			PaginatorInterface $paginator,
-			AdapterInterface $cache
+			PaginatorInterface $paginator
 		)
 		{
 			$this->entityManager = $entityManager;
 			$this->serializer = $serializer;
 			$this->paginator = $paginator;
-			$this->cache = $cache;
 		}
 
 		public function getPage($page): int
@@ -38,18 +37,18 @@
 		public function paginate(array $data, int $page = null, int $limit = null, string $group = null):
 		string
 		{
+			$items = (!is_null($limit)) ? $this->paginator->paginate($data, $page, $limit )->getItems() : $data;
 
-			$pagedItems = $this->paginator->paginate($data, $page, (!is_null($limit)) ? $limit : 10 );
 
-			if(empty($pagedItems->getItems())) {
+			if(empty($items)) {
 
-				throw new JsonException("There is no data present on this page. Try Again");
+				throw new HttpException(Response::HTTP_NOT_FOUND, "There is no data in this page. Try again !");
 			}
 
 			(is_null($group)) ?
-				$data = $this->serializer->serialize($pagedItems->getItems(), "json")
+				$data = $this->serializer->serialize($items, "json")
 				:
-				$data = $this->serializer->serialize($pagedItems->getItems(), "json", SerializationContext::create()->setGroups
+				$data = $this->serializer->serialize($items, "json", SerializationContext::create()->setGroups
 				([$group]))
 			;
 

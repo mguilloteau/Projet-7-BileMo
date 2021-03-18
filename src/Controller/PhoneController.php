@@ -66,9 +66,7 @@ class PhoneController extends AbstractController
 	 *     )
 	 * )
 	 * @OA\Response(response="200", description="Get an object of the phone", @Model(type=Phone::class))
-	 * @OA\Response(response="400",description="Error: Some data are incorrect or missing. Try Again")
-	 * @OA\Response(response="401",description="Token Error")
-	 * @OA\Response(response="404",description="There is no data present on this page. Try Again")
+	 * @OA\Response(response="401",description="App\\Entity\\Phone object not found by the @ParamConverter annotation.")
 	 * @OA\Tag(name="Phones")
 	 * @Route ("/{id}", name="details_phone", methods={"GET"})
 	 * @Security(name="Bearer")
@@ -102,6 +100,7 @@ class PhoneController extends AbstractController
 	 *        @OA\Items(ref=@Model(type=Phone::class))
 	 *     )
 	 * )
+	 * @OA\Response(response="400",description="There is no data present on this page. Try Again")
 	 * @OA\Response(response="401",description="Token Error")
 	 * @OA\Tag(name="Phones")
 	 * @Route("/", name="list_phone", methods={"GET"})
@@ -115,7 +114,7 @@ class PhoneController extends AbstractController
 
 			$data = $this->cache->getDataCached('phones', $this->entityManager->getRepository(Phone::class)->findAll());
 
-    	$phones = $this->paginator->paginate($data, $this->paginator->getPage($request->query->get("page")), 10);
+    	$phones = $this->paginator->paginate($data, $this->paginator->getPage($request->query->get("page")), (!is_null($request->get("page"))) ? 10 : null);
 
 			return new Response($phones, Response::HTTP_OK , ["Content-Type" => "application/json"]);
     }
