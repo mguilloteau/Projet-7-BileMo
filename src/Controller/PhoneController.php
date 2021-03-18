@@ -66,7 +66,7 @@ class PhoneController extends AbstractController
 	 *     )
 	 * )
 	 * @OA\Response(response="200", description="Get an object of the phone", @Model(type=Phone::class))
-	 * @OA\Response(response="401",description="App\\Entity\\Phone object not found by the @ParamConverter annotation.")
+	 * @OA\Response(response="404",description="App\\Entity\\Phone object not found by the @ParamConverter annotation.")
 	 * @OA\Tag(name="Phones")
 	 * @Route ("/{id}", name="details_phone", methods={"GET"})
 	 * @Security(name="Bearer")
